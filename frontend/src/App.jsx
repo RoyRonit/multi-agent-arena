@@ -7,6 +7,7 @@ import Transcript from './components/Transcript';
 import Verdict from './components/Verdict';
 import EventLog from './components/EventLog';
 import LeaveNudge from './components/LeaveNudge';
+import Experiments from './components/Experiments';
 import { DEFAULT_AGENTS } from './agents';
 
 export default function App() {
@@ -113,11 +114,14 @@ export default function App() {
       {error && <div className="error-banner">⚠ {error}</div>}
 
       {preDebate ? (
-        <Hero
-          agents={roster}
-          maxBalance={maxBalance}
-          onConvene={(b, r, p) => start(b, r, p)}
-        />
+        <div id="roundtable">
+          <Hero
+            agents={roster}
+            maxBalance={maxBalance}
+            onConvene={(b, r, p) => start(b, r, p)}
+          />
+          <Experiments />
+        </div>
       ) : (
         <div className="stage">
           <div className="stage-left">

@@ -293,6 +293,31 @@ body {
 
 .error-banner { background: var(--card); border: 1px solid var(--loss); color: var(--loss); border-radius: 8px; padding: 12px 16px; font-family: var(--mono); font-size: var(--t-data); margin-bottom: 16px; }
 
+/* --- Upcoming experiments (ongoing research lab) --- */
+.experiments { max-width: 900px; margin: 64px auto 24px; padding: 0 4px; opacity: 0; transform: translateY(16px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
+.experiments.in { opacity: 1; transform: none; }
+.experiments .eyebrow { display: block; margin-bottom: 16px; }
+.exp-headline { font-family: var(--sans); font-weight: 600; font-size: 24px; letter-spacing: -0.01em; margin: 0 0 8px; color: var(--ink); }
+.exp-dek { font-size: var(--t-body); color: var(--ink-60); margin: 0 0 32px; max-width: 620px; }
+.exp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 700px) { .exp-grid { grid-template-columns: 1fr; } }
+.exp-card { display: block; background: var(--card); border: 1px solid var(--hairline); border-radius: var(--radius); padding: 20px; cursor: default; text-decoration: none; color: inherit; transition: transform 200ms var(--ease), border-color 200ms var(--ease); }
+.exp-card.is-link { cursor: pointer; }
+.exp-card.is-link:hover { transform: translateY(-2px); border-color: var(--ink-30); }
+.exp-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.exp-num { font-size: var(--t-data); color: var(--ink-30); letter-spacing: 0.1em; }
+.exp-title { font-family: var(--sans); font-size: var(--t-name); font-weight: 600; margin: 0 0 6px; color: var(--ink); }
+.exp-thesis { font-size: var(--t-data); line-height: 1.5; color: var(--ink-60); margin: 0; }
+.exp-tag { font-size: var(--t-micro); letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid var(--hairline); border-radius: 6px; padding: 3px 7px; color: var(--ink-60); animation: tagblink 2.4s var(--ease) infinite; }
+/* unique cadences so tags don't pulse in unison */
+.status-live { color: var(--gain); border-color: var(--gain); animation-duration: 1.6s; }
+.status-in-build { animation-duration: 2.1s; }
+.status-research { animation-duration: 2.7s; }
+.status-queued { animation-duration: 3.2s; }
+@keyframes tagblink { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
+  .experiments { opacity: 1 !important; transform: none !important; }
+  .exp-tag { opacity: 1 !important; }
 }
