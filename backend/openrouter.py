@@ -65,7 +65,12 @@ async def stream_chat(
                     obj = json.loads(data)
                 except json.JSONDecodeError:
                     continue
-                delta = obj.get("choices", [{}])[0].get("delta", {})
+                # `choices` can be present but empty (role/usage/keep-alive chunks),
+                # so guard the index instead of relying on a missing-key default.
+                choices = obj.get("choices") or []
+                if not choices:
+                    continue
+                delta = choices[0].get("delta") or {}
                 chunk = delta.get("content")
                 if chunk:
                     yield chunk
@@ -94,8 +99,7 @@ async def complete_json(
         )
     if resp.status_code >= 400:
         raise OpenRouterError(f"{resp.status_code}: {resp.text[:500]}")
-    content = resp.json()["choices"][0]["message"]["content"]
-    return _loads_lenient(content)
+    return _loads_lenient(_first_content(resp.json()))
 
 
 async def complete_text(
@@ -119,7 +123,21 @@ async def complete_text(
         )
     if resp.status_code >= 400:
         raise OpenRouterError(f"{resp.status_code}: {resp.text[:500]}")
-    return resp.json()["choices"][0]["message"]["content"].strip()
+    return _first_content(resp.json()).strip()
+
+
+def _first_content(body: dict) -> str:
+    """Pull the first message's content, with a clear error if the model returned
+    no choices (moderation, provider hiccup) instead of a bare IndexError."""
+    choices = body.get("choices") or []
+    if not choices:
+        err = body.get("error") or body
+        raise OpenRouterError(f"Model returned no choices: {json.dumps(err)[:300]}")
+    message = choices[0].get("message") or {}
+    content = message.get("content")
+    if not content:
+        raise OpenRouterError("Model returned an empty message.")
+    return content
 
 
 def _loads_lenient(content: str) -> dict:
